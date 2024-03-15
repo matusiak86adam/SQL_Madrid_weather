@@ -1,0 +1,197 @@
+--Dataset: Madrid weather data between 01.01.1997 and 31.12.2015
+========================================================================================
+
+
+--What was the maximum temperature divided to each month in examined period?
+
+select 
+month(CET)	       as month
+,max(Max_TemperatureC) as MaxTemp
+from weather
+group by 1
+
+--RESULTS:
+
+month|MaxTemp|
+-----+-------+
+    1|     21|
+    2|     23|
+    3|     27|
+    4|     30|
+    5|     36|
+    6|     40|
+    7|     40|
+    8|     41|
+    9|     38|
+   10|     32|
+   11|     24|
+   12|     19|
+
+==========================================================================================
+
+--What was the maximum temperature divided to each month between 01.01.2005 and 31.12.2015?
+
+select 
+month(CET)	       as month
+,max(Max_TemperatureC) as MaxTemp
+from weather
+where (CET between date('2005-01-01') and date('2015-12-31'))
+group by 1
+
+--RESULTS:
+
+month|MaxTemp|
+-----+-------+
+    1|     19|
+    2|     22|
+    3|     27|
+    4|     30|
+    5|     36|
+    6|     40|
+    7|     40|
+    8|     41|
+    9|     38|
+   10|     32|
+   11|     24|
+   12|     19|
+
+===========================================================================================================
+
+What was the number of days during which the temperature dropped below 0 degrees?
+
+select
+count(Min_TemperatureC)  as Min_Temp 
+from weather 
+where Min_TemperatureC <0
+
+--RESULTS:
+
+Min_Temp|
+--------+
+     721|
+
+===========================================================================================================
+
+-- Which day did Madrid experience the fastest wind gust? What was the average humidity on that day?
+
+select 
+CET			as Date	
+,max(Max_Wind_SpeedKmh)	as Wind_speed
+from weather 
+group by 1
+order by 2 desc 
+limit 1;
+
+
+select 
+` Mean Humidity` 
+from weather 
+where CET = '1999-12-15'
+
+--RESULTS:
+
+Date      |Wind_speed|
+----------+----------+
+1999-12-15|       182|
+
+Mean Humidity|
+-------------+
+           71|
+
+===========================================================================================================
+
+What was the month with the highest average temperature and high it was with rounding to two decimal places?
+
+select 
+month(CET)
+,round(avg(Max_TemperatureC),2)	as max_temp_month
+from weather 
+group by 1
+order by 2 desc 
+limit 1
+
+--RESULTS:
+
+month(CET)|max_temp_month|
+----------+--------------+
+         7|         33.00|
+
+============================================================================================================
+
+Comparing the average visibility(km) in clear and foggy days. The reults rounded to two decimal places.
+
+select 
+round(avg(Mean_visibilityKm),2)
+from weather 
+where ` Events` = ""
+
+select 
+round(avg(Mean_visibilityKm),2)
+from weather 
+where ` Events` = "Fog"
+
+--RESULTS:
+
+round(avg(Mean_visibilityKm),2)|
+-------------------------------+
+                          12.64|
+
+round(avg(Mean_visibilityKm),2)|
+-------------------------------+
+                           6.54|
+
+=============================================================================================================
+
+-- What whas the percentage of clear and rainy days?
+
+select 
+round((select 
+count(CET)
+from weather 
+where ` Events` = "")/(select 
+count(CET)
+from weather )*100,2) as percentage_of_clear_days
+from weather 
+group by 1
+
+select 
+round((select 
+count(CET)
+from weather 
+where ` Events` = "Rain")/(select 
+count(CET)
+from weather )*100,2) as percentage_of_rainy_days
+from weather 
+group by 1
+
+--RESULTS:
+
+percentage_of_clear_days|
+------------------------+
+                   73.61|
+
+percentage_of_rainy_days|
+------------------------+
+                   16.74|
+
+=================================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
